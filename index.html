@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RenoCompare | Renovation Proposal Comparison Platform</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">🏠 Reno<span>Compare</span></div>
+    <nav>
+      <a href="#requirements">Requirements</a>
+      <a href="#contractors">Contractors & Proposals</a>
+      <a href="#comparison">Compare Matrix</a>
+      <a href="#add-proposal" class="btn-nav">+ Add Proposal</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- 1. PROJECT REQUIREMENTS -->
+    <section id="requirements" class="card req-banner">
+      <div class="req-header">
+        <div>
+          <span class="badge">Active Renovation Project</span>
+          <h1>Master Kitchen & Living Room Remodel</h1>
+          <p>Compare contractor scope, materials, timelines, and quoted work side by side.</p>
+        </div>
+        <div class="req-stats">
+          <div class="stat-box">
+            <span class="stat-label">Target Budget</span>
+            <strong id="target-budget">₹6,50,000</strong>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Target Timeline</span>
+            <strong>6 Weeks</strong>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Required Scope</span>
+            <strong>Modular Cabinets, Quartz Counter, Flooring, Electrical, Painting</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. CONTRACTOR PROFILES, PROPOSALS & SELECTION STATUS -->
+    <section id="contractors">
+      <div class="section-header">
+        <h2>Submitted Contractor Proposals</h2>
+        <div class="filter-controls">
+          <label for="statusFilter">Filter by Selection Status:</label>
+          <select id="statusFilter" onchange="renderAll()">
+            <option value="All">All Proposals</option>
+            <option value="Under Review">Under Review</option>
+            <option value="Shortlisted">Shortlisted</option>
+            <option value="Selected">Selected</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div id="proposal-cards" class="cards-grid"></div>
+    </section>
+
+    <!-- 3. SIDE-BY-SIDE COMPARISON (SCOPE, MATERIALS, TIMELINE, QUOTED WORK) -->
+    <section id="comparison" class="card">
+      <div class="section-header">
+        <h2>Side-by-Side Proposal Comparison Matrix</h2>
+        <span class="subtitle">Automatically highlights best price and fastest timeline</span>
+      </div>
+      <div class="table-responsive">
+        <table id="comparison-table">
+          <thead>
+            <tr id="table-head-row">
+              <th>Comparison Criteria</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. ADD NEW CONTRACTOR PROPOSAL FORM -->
+    <section id="add-proposal" class="card">
+      <h2>Add New Contractor Proposal</h2>
+      <form id="proposalForm" onsubmit="addProposal(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Contractor / Company Name *</label>
+            <input type="text" id="contractorName" required placeholder="e.g., UrbanNest Builders" />
+          </div>
+          <div class="form-group">
+            <label>Experience (Years) & Rating *</label>
+            <input type="text" id="profileInfo" required placeholder="e.g., 9 Yrs Exp • 4.7 ★" />
+          </div>
+          <div class="form-group">
+            <label>Quoted Price (₹) *</label>
+            <input type="number" id="quotedPrice" required placeholder="e.g., 610000" />
+          </div>
+          <div class="form-group">
+            <label>Estimated Timeline (Weeks) *</label>
+            <input type="number" id="timelineWeeks" required placeholder="e.g., 5" />
+          </div>
+          <div class="form-group">
+            <label>Material Details (Brand & Grade) *</label>
+            <input type="text" id="materials" required placeholder="e.g., Hettich Hardware, Kalinga Quartz, Kajaria Tiles" />
+          </div>
+          <div class="form-group">
+            <label>Warranty Offered *</label>
+            <input type="text" id="warranty" required placeholder="e.g., 5 Years Workmanship Warranty" />
+          </div>
+        </div>
+
+        <div class="scope-checkboxes">
+          <label class="scope-title">Included Scope of Work:</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" value="Demolition & Debris Removal" checked /> Demolition</label>
+            <label><input type="checkbox" value="Modular Cabinetry" checked /> Modular Cabinetry</label>
+            <label><input type="checkbox" value="Countertop Installation" checked /> Countertop</label>
+            <label><input type="checkbox" value="Flooring & Tiling" checked /> Flooring & Tiling</label>
+            <label><input type="checkbox" value="Electrical & Plumbing" /> Electrical & Plumbing</label>
+            <label><input type="checkbox" value="Painting & Finishing" /> Painting & Finishing</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Save & Compare Proposal</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>CSE-326 CA2 Problem Statement Project • RenoCompare Platform</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
