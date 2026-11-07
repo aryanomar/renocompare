@@ -1,71 +1,392 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="emerald">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RenoCompare | Renovation Proposal Comparison Platform</title>
+  <title>RenoCompare v7.0 Ultimate Edition | Multi-Project Renovation Proposal Comparison Platform</title>
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, and JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- ================= 1. ANIMATED STORY INTRO OVERLAY ================= -->
+  <div id="story-intro-overlay" class="story-overlay">
+    <div class="story-stage card">
+      <span class="badge badge-animated">✨ Smart Multi-Project Renovation Ecosystem</span>
+
+      <div class="scene-container">
+        <div class="anim-house">
+          <div class="house-roof"></div>
+          <div class="house-body">
+            <div class="house-window">
+              <span class="consumer-avatar" title="Homeowner Inside">🙋‍♂️🏠</span>
+              <span class="thought-bubble">📋❓ Multiple Quotes...</span>
+            </div>
+          </div>
+          <div class="scene-label">1. Homeowner Posts Projects</div>
+        </div>
+
+        <div class="anim-bridge">
+          <div class="brand-burst">
+            <div class="burst-icon">⚡🏠⚡</div>
+            <strong>Reno<span>Compare</span></strong>
+            <small>Scope • Cost Split • Counter-Offers • Gantt</small>
+          </div>
+        </div>
+
+        <div class="anim-contractor">
+          <div class="contractor-box">
+            <span class="contractor-avatar">👷‍♂️🔨</span>
+            <span class="proposal-tag">📄 Verified Bids</span>
+          </div>
+          <div class="scene-label">2. Contractors Compete</div>
+        </div>
+      </div>
+
+      <h1 class="story-title">Compare Renovation Proposals Across All Your Home Projects</h1>
+      <p class="story-desc">
+        Post multiple renovation projects, calculate fair area budgets, compare itemized Material vs. Labor splits, negotiate counter-offers, and track 20%-50%-30% milestones side by side.
+      </p>
+
+      <div class="story-actions">
+        <button class="btn-primary btn-glow" onclick="closeStoryIntro()">🚀 Launch RenoCompare v7.0 Ultimate →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 2. LOGIN OVERLAY MODAL ================= -->
+  <div id="login-overlay" class="login-overlay hidden">
+    <div class="login-box card">
+      <div class="logo login-logo">🏠 Reno<span>Compare</span></div>
+      <p class="login-subtitle">Sign in to create projects, bid on renovations, or audit chats</p>
+
+      <div class="role-tabs">
+        <button type="button" class="role-tab active" onclick="selectLoginRole('Consumer', event)">🏠 Consumer</button>
+        <button type="button" class="role-tab" onclick="selectLoginRole('Contractor', event)">🔨 Contractor</button>
+        <button type="button" class="role-tab" onclick="selectLoginRole('Admin', event)">🛡️ Admin</button>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Selected Role</label>
+          <input type="text" id="loginRole" value="Consumer" readonly />
+        </div>
+        <div class="form-group">
+          <label>Full Name / Company Name *</label>
+          <input type="text" id="loginUsername" required value="Aarav Sharma (Homeowner)" />
+        </div>
+        <div class="form-group">
+          <label>Password *</label>
+          <input type="password" id="loginPassword" required value="demo123" />
+        </div>
+        <button type="submit" class="btn-primary btn-full">Login to Platform</button>
+      </form>
+      <small class="demo-hint">💡 Tip for Viva: Click Consumer, Contractor, or Admin to switch views!</small>
+    </div>
+  </div>
+
+  <!-- ================= 3. THANK YOU / PROJECT CELEBRATION MODAL ================= -->
+  <div id="celebration-modal" class="celebration-overlay hidden">
+    <div class="celebration-box card">
+      <div class="confetti-row">🎉 ✨ 🏆 🏠 ✨ 🎉</div>
+      <div class="trophy-circle">🤝</div>
+      <h2>Thank You for Choosing RenoCompare!</h2>
+      <p id="celebration-message" class="celebration-text">
+        Your renovation partner has been locked in with full transparency on scope, materials, and timeline.
+      </p>
+      <div class="celebration-perks">
+        <span>✅ Scope Verified</span>
+        <span>✅ Milestones Tracked</span>
+        <span>✅ Chat Monitored</span>
+      </div>
+      <div class="celebration-actions">
+        <button class="btn-primary btn-glow" onclick="goToFeedbackFromCelebration()">⭐ Rate Us & Your Partner</button>
+        <button class="btn-outline" onclick="closeCelebrationModal()">Continue to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 4. ON-PLATFORM TRANSPARENT CHAT MODAL ================= -->
+  <div id="chat-modal" class="chat-overlay hidden">
+    <div class="chat-box card">
+      <div class="chat-header">
+        <div>
+          <span class="badge badge-chat">🔒 100% On-Platform Transparent Channel (Admin Monitored)</span>
+          <h3 id="chat-contractor-title">Project Discussion</h3>
+          <small id="chat-proposal-meta"></small>
+        </div>
+        <button class="btn-close-chat" onclick="closeChatModal()">✕ Close</button>
+      </div>
+
+      <div id="chat-messages" class="chat-messages"></div>
+
+      <div class="quick-topics">
+        <span>Quick Topics:</span>
+        <button type="button" onclick="insertQuickTopic('Please confirm the exact material brand models and warranty certificate.')">📦 Material Brands</button>
+        <button type="button" onclick="insertQuickTopic('Can we lock the 20%-50%-30% milestone payment schedule and start date?')">💰 Milestone Schedule</button>
+        <button type="button" onclick="insertQuickTopic('Let us schedule an on-site measurement visit before work begins.')">📐 Site Visit</button>
+      </div>
+
+      <form id="chatForm" class="chat-input-row" onsubmit="sendChatMessage(event)">
+        <input
+          type="text"
+          id="chatInput"
+          required
+          placeholder="Type a message for transparent on-platform record..."
+        />
+        <button type="submit" class="btn-primary">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= 5. SMART RENOVATION CONTRACT MODAL ================= -->
+  <div id="contract-modal" class="contract-overlay hidden">
+    <div class="contract-box card">
+      <div class="chat-header">
+        <div>
+          <span class="badge badge-animated">📜 Official Digital Renovation Agreement</span>
+          <h3 id="contract-title">Work Order & Milestone Agreement</h3>
+          <small id="contract-subtitle">Auto-generated via RenoCompare Transparency Engine</small>
+        </div>
+        <button class="btn-close-chat" onclick="closeContractModal()">✕ Close</button>
+      </div>
+      <div id="contract-body" class="contract-body"></div>
+      <div class="celebration-actions" style="margin-top:1rem">
+        <button class="btn-primary" onclick="window.print()">🖨️ Print / Save Official Contract PDF</button>
+        <button class="btn-outline" onclick="closeContractModal()">Close Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOP NAVIGATION BAR WITH LIVE THEME PICKER ================= -->
   <header class="navbar">
-    <div class="logo">🏠 Reno<span>Compare</span></div>
-    <nav>
-      <a href="#requirements">Requirements</a>
-      <a href="#contractors">Contractors & Proposals</a>
+    <div class="logo" onclick="replayStoryIntro()" style="cursor:pointer" title="Click to replay intro animation">
+      🏠 Reno<span>Compare</span> <small class="version-pill">v7.0 Ultimate</small>
+    </div>
+
+    <nav class="nav-links">
+      <a href="#requirements">Projects</a>
+      <a href="#ai-insights">Smart Assistant</a>
+      <a href="#contractors">Proposals</a>
       <a href="#comparison">Compare Matrix</a>
-      <a href="#add-proposal" class="btn-nav">+ Add Proposal</a>
+      <a href="#add-proposal">Submit Bid</a>
+      <a href="#feedback-section">⭐ Ratings</a>
+      <a href="#faq-section">FAQ</a>
     </nav>
+
+    <!-- Live 4-Theme Picker Pill -->
+    <div class="theme-picker-pill" title="Switch Live Color Theme">
+      <button type="button" class="theme-chip active" onclick="setAppTheme('emerald', this)">🌿 Emerald Sand</button>
+      <button type="button" class="theme-chip" onclick="setAppTheme('clay', this)">🌸 Soft Clay</button>
+      <button type="button" class="theme-chip" onclick="setAppTheme('cobalt', this)">📐 Blueprint</button>
+      <button type="button" class="theme-chip" onclick="setAppTheme('dark', this)">🌙 Dark</button>
+    </div>
+
+    <div class="user-Session">
+      <button class="btn-anim-replay" onclick="replayStoryIntro()">🎬 Intro</button>
+      <span id="currentUserBadge" class="role-badge">Consumer</span>
+      <button class="btn-outline" onclick="openLoginModal()">Switch Role</button>
+    </div>
   </header>
 
   <main class="container">
-    <!-- 1. PROJECT REQUIREMENTS -->
-    <section id="requirements" class="card req-banner">
-      <div class="req-header">
+
+    <!-- ================= ADMIN CONTROL & CHAT AUDIT PANEL (ADMIN ONLY) ================= -->
+    <section id="admin-panel" class="card admin-banner hidden">
+      <div class="section-header">
         <div>
-          <span class="badge">Active Renovation Project</span>
-          <h1>Master Kitchen & Living Room Remodel</h1>
-          <p>Compare contractor scope, materials, timelines, and quoted work side by side.</p>
+          <span class="badge badge-admin">🛡️ Admin Control & Transparency Center</span>
+          <h2>Platform Overview & Consumer-Contractor Chat Audit Log</h2>
+        </div>
+        <button class="btn-delete" onclick="resetDemoData()">↺ Reset Default Demo Data</button>
+      </div>
+      <div class="admin-stats" id="admin-stats"></div>
+
+      <div class="admin-chat-monitor">
+        <h3>🔍 Live On-Platform Chat & Counter-Offer Monitor</h3>
+        <p class="subtitle">Admin can audit all discussions and price negotiations between Consumers and Contractors across all projects.</p>
+        <div id="admin-chat-log" class="admin-chat-list"></div>
+      </div>
+    </section>
+
+    <!-- ================= 1. MULTI-PROJECT SWITCHER & PRE-BID BUDGET CALCULATOR ================= -->
+    <section id="requirements" class="card req-banner">
+      <div class="project-switcher-bar">
+        <div class="switcher-left">
+          <span class="switcher-label">📂 Select Active Renovation Project:</span>
+          <div id="project-tabs" class="project-tabs"></div>
+        </div>
+        <div id="consumer-req-actions" class="switcher-actions">
+          <button type="button" class="btn-calc-drawer" onclick="togglePreBidCalculator()">🧮 Smart Area Budget Calculator</button>
+          <button type="button" class="btn-new-proj" onclick="openProjectForm('new')">➕ Add New Project</button>
+          <button type="button" class="btn-edit-req" onclick="openProjectForm('edit')">✏️ Edit Current Project</button>
+        </div>
+      </div>
+
+      <div class="req-header">
+        <div class="req-info">
+          <span class="badge" id="req-id-badge">Active Project #1</span>
+          <h1 id="req-title-display">Master Kitchen & Living Room Remodel</h1>
+          <p id="req-desc-display"></p>
         </div>
         <div class="req-stats">
           <div class="stat-box">
             <span class="stat-label">Target Budget</span>
-            <strong id="target-budget">₹6,50,000</strong>
+            <strong id="req-budget-display" class="mono-num" style="font-size:1.35rem">₹6,50,000</strong>
           </div>
           <div class="stat-box">
-            <span class="stat-label">Target Timeline</span>
-            <strong>6 Weeks</strong>
+            <span class="stat-label">Desired Timeline</span>
+            <strong id="req-timeline-display" class="mono-num" style="font-size:1.35rem">6 Weeks</strong>
           </div>
           <div class="stat-box">
-            <span class="stat-label">Required Scope</span>
-            <strong>Modular Cabinets, Quartz Counter, Flooring, Electrical, Painting</strong>
+            <span class="stat-label">Required Scope Items</span>
+            <strong id="req-scope-display" style="font-size:0.88rem"></strong>
           </div>
         </div>
       </div>
+
+      <!-- NEW FEATURE A: SMART PRE-BID AREA & MATERIAL TIER BUDGET CALCULATOR DRAWER -->
+      <div id="prebidCalcDrawer" class="prebid-calc-drawer hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem">
+          <div>
+            <span class="badge" style="background:var(--primary-bright);color:#042f2e">🧮 Pre-Bid Smart Benchmark Estimator</span>
+            <h3 style="margin-top:0.3rem;font-size:1.1rem">Estimate Fair Renovation Target Budget by Carpet Area & Material Grade</h3>
+          </div>
+          <button type="button" class="btn-outline-light" style="padding:0.3rem 0.75rem;font-size:0.78rem" onclick="togglePreBidCalculator()">✕ Hide Calculator</button>
+        </div>
+
+        <div class="calc-grid">
+          <div class="form-group">
+            <label style="color:#e2e8f0">1. Carpet Area (Sq. Ft.) *</label>
+            <input type="number" id="calcAreaSqft" value="350" min="30" max="10000" oninput="computePreBidEstimate()" />
+          </div>
+          <div class="form-group">
+            <label style="color:#e2e8f0">2. Material & Finish Tier *</label>
+            <select id="calcMaterialTier" onchange="computePreBidEstimate()">
+              <option value="1200">Economy Tier (₹1,200 / sq.ft)</option>
+              <option value="1850" selected>Premium Tier (₹1,850 / sq.ft)</option>
+              <option value="2600">Luxury Architectural (₹2,600 / sq.ft)</option>
+            </select>
+          </div>
+          <div class="calc-result-pill">
+            <div>
+              <small style="color:var(--accent-highlight);display:block;font-size:0.7rem;font-weight:700;text-transform:uppercase">Recommended Budget</small>
+              <strong id="calcRecommendedOutput" class="mono-num" style="font-size:1.25rem;color:#ffffff">₹6,47,500</strong>
+            </div>
+            <button type="button" class="btn-primary" style="padding:0.48rem 0.9rem;font-size:0.78rem" onclick="applyEstimatedBudgetToProject()">
+              ✔ Apply to Project Budget
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsible Add / Edit Project Form -->
+      <form id="reqForm" class="req-form hidden" onsubmit="saveRequirements(event)">
+        <h3 id="reqFormHeading">Create / Update Homeowner Renovation Project</h3>
+        <input type="hidden" id="reqFormMode" value="edit" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Renovation Project Title *</label>
+            <input type="text" id="reqTitleInput" required placeholder="e.g., Master Bathroom & Terrace Waterproofing" />
+          </div>
+          <div class="form-group">
+            <label>Maximum Budget (₹) *</label>
+            <input type="number" id="reqBudgetInput" required min="10000" placeholder="e.g., 350000" />
+          </div>
+          <div class="form-group">
+            <label>Target Timeline (Weeks) *</label>
+            <input type="number" id="reqTimelineInput" required min="1" placeholder="e.g., 4" />
+          </div>
+          <div class="form-group">
+            <label>Project Description & Location *</label>
+            <input type="text" id="reqDescInput" required placeholder="Describe room dimensions, preferred brands, and goals..." />
+          </div>
+        </div>
+
+        <div class="scope-checkboxes">
+          <label class="scope-title" style="color:#ffffff">Select Required Scope of Work for Contractors:</label>
+          <div class="checkbox-group" id="reqScopeCheckboxes"></div>
+        </div>
+
+        <div class="form-btn-row">
+          <button type="submit" class="btn-primary">💾 Save Project & Update Marketplace</button>
+          <button type="button" class="btn-outline-light" onclick="closeProjectForm()">Cancel</button>
+        </div>
+      </form>
     </section>
 
-    <!-- 2. CONTRACTOR PROFILES, PROPOSALS & SELECTION STATUS -->
-    <section id="contractors">
+    <!-- ================= 2. AI DECISION ASSISTANT & CONTINGENCY SIMULATOR ================= -->
+    <section id="ai-insights" class="card insights-card">
       <div class="section-header">
-        <h2>Submitted Contractor Proposals</h2>
+        <div>
+          <span class="badge badge-animated">🧠 Smart Decision Engine & Cost Estimator</span>
+          <h2>Automated Proposal Insights & Contingency Simulator</h2>
+          <p class="subtitle">Real-time analysis of submitted bids plus hidden-cost & GST buffer simulation</p>
+        </div>
+        <div class="simulator-controls">
+          <div class="sim-control-box">
+            <label for="contingencySlider">Contingency Buffer: <strong id="contingencyValue" class="mono-num">0%</strong></label>
+            <input type="range" id="contingencySlider" min="0" max="20" step="5" value="0" oninput="updateSimulator()" />
+          </div>
+          <label class="sim-checkbox">
+            <input type="checkbox" id="gstToggle" onchange="updateSimulator()" />
+            <span>Include 18% GST Estimate</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="ai-recommendation-grid" class="insights-grid"></div>
+    </section>
+
+    <!-- ================= 3. CONTRACTOR PROPOSALS ================= -->
+    <section id="contractors" class="card">
+      <div class="section-header">
+        <div>
+          <h2 id="proposals-section-title">Submitted Contractor Proposals</h2>
+          <div class="legend-pills">
+            <span class="legend-box legend-blue">🔵 Blue = Under Review</span>
+            <span class="legend-box legend-amber">🟡 Amber = Shortlisted</span>
+            <span class="legend-box legend-green">🟢 Green = Selected (Unlocks Chat & Contract)</span>
+            <span class="legend-box legend-red">🔴 Red = Rejected</span>
+          </div>
+        </div>
         <div class="filter-controls">
-          <label for="statusFilter">Filter by Selection Status:</label>
+          <input type="text" id="searchFilter" placeholder="🔍 Search brand, material, contractor..." oninput="renderAll()" />
+          <label class="verified-toggle">
+            <input type="checkbox" id="verifiedOnlyFilter" onchange="renderAll()" />
+            <span>✅ Verified Only</span>
+          </label>
           <select id="statusFilter" onchange="renderAll()">
-            <option value="All">All Proposals</option>
-            <option value="Under Review">Under Review</option>
-            <option value="Shortlisted">Shortlisted</option>
-            <option value="Selected">Selected</option>
-            <option value="Rejected">Rejected</option>
+            <option value="All">Status: All Proposals</option>
+            <option value="Under Review">🔵 Under Review</option>
+            <option value="Shortlisted">🟡 Shortlisted</option>
+            <option value="Selected">🟢 Selected</option>
+            <option value="Rejected">🔴 Rejected</option>
+          </select>
+          <select id="sortOrder" onchange="renderAll()">
+            <option value="match">Sort: Highest Match Score</option>
+            <option value="priceAsc">Sort: Lowest Price First</option>
+            <option value="timeAsc">Sort: Fastest Timeline First</option>
           </select>
         </div>
       </div>
       <div id="proposal-cards" class="cards-grid"></div>
     </section>
 
-    <!-- 3. SIDE-BY-SIDE COMPARISON (SCOPE, MATERIALS, TIMELINE, QUOTED WORK) -->
+    <!-- ================= 4. SIDE-BY-SIDE COMPARISON MATRIX ================= -->
     <section id="comparison" class="card">
       <div class="section-header">
-        <h2>Side-by-Side Proposal Comparison Matrix</h2>
-        <span class="subtitle">Automatically highlights best price and fastest timeline</span>
+        <div>
+          <h2>Side-by-Side Proposal Comparison Matrix</h2>
+          <span class="subtitle">Compares contractor quotes, itemized 55/30/15 cost splits, counter-offers, milestone payments, and scope</span>
+        </div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+          <button class="btn-outline" onclick="exportComparisonCSV()">📊 Export CSV</button>
+          <button class="btn-outline" onclick="window.print()">🖨️ Print / Save PDF</button>
+        </div>
       </div>
       <div class="table-responsive">
         <table id="comparison-table">
@@ -79,56 +400,244 @@
       </div>
     </section>
 
-    <!-- 4. ADD NEW CONTRACTOR PROPOSAL FORM -->
+    <!-- ================= 5. CONTRACTOR PROPOSAL SUBMISSION FORM ================= -->
     <section id="add-proposal" class="card">
-      <h2>Add New Contractor Proposal</h2>
+      <div class="section-header">
+        <div>
+          <span class="badge">🔨 Contractor Bidding Portal</span>
+          <h2>Submit Contractor Proposal for Any Active Project</h2>
+          <p class="subtitle">Contractors can select which homeowner project they want to bid on and enter their quote</p>
+        </div>
+      </div>
       <form id="proposalForm" onsubmit="addProposal(event)">
         <div class="form-grid">
           <div class="form-group">
-            <label>Contractor / Company Name *</label>
+            <label>1. Choose Homeowner Project to Bid On *</label>
+            <select id="proposalProjectSelect" required onchange="syncProjectFromBidForm(this.value)"></select>
+          </div>
+          <div class="form-group">
+            <label>2. Contractor / Company Name *</label>
             <input type="text" id="contractorName" required placeholder="e.g., UrbanNest Builders" />
           </div>
           <div class="form-group">
-            <label>Experience (Years) & Rating *</label>
-            <input type="text" id="profileInfo" required placeholder="e.g., 9 Yrs Exp • 4.7 ★" />
+            <label>3. Contractor Profile (Exp & Rating) *</label>
+            <input type="text" id="profileInfo" required placeholder="e.g., 9 Yrs Exp • 4.7 ★ (Licensed)" />
           </div>
           <div class="form-group">
-            <label>Quoted Price (₹) *</label>
+            <label>4. Quoted Price (₹) *</label>
             <input type="number" id="quotedPrice" required placeholder="e.g., 610000" />
           </div>
           <div class="form-group">
-            <label>Estimated Timeline (Weeks) *</label>
+            <label>5. Estimated Timeline (Weeks) *</label>
             <input type="number" id="timelineWeeks" required placeholder="e.g., 5" />
           </div>
           <div class="form-group">
-            <label>Material Details (Brand & Grade) *</label>
+            <label>6. Material Details (Brands & Grades) *</label>
             <input type="text" id="materials" required placeholder="e.g., Hettich Hardware, Kalinga Quartz, Kajaria Tiles" />
           </div>
           <div class="form-group">
-            <label>Warranty Offered *</label>
+            <label>7. Warranty & Support Offered *</label>
             <input type="text" id="warranty" required placeholder="e.g., 5 Years Workmanship Warranty" />
           </div>
         </div>
 
         <div class="scope-checkboxes">
-          <label class="scope-title">Included Scope of Work:</label>
-          <div class="checkbox-group">
-            <label><input type="checkbox" value="Demolition & Debris Removal" checked /> Demolition</label>
-            <label><input type="checkbox" value="Modular Cabinetry" checked /> Modular Cabinetry</label>
-            <label><input type="checkbox" value="Countertop Installation" checked /> Countertop</label>
-            <label><input type="checkbox" value="Flooring & Tiling" checked /> Flooring & Tiling</label>
-            <label><input type="checkbox" value="Electrical & Plumbing" /> Electrical & Plumbing</label>
-            <label><input type="checkbox" value="Painting & Finishing" /> Painting & Finishing</label>
+          <label class="scope-title">Included Scope of Work in This Quote:</label>
+          <div class="checkbox-group" id="proposalScopeCheckboxes"></div>
+        </div>
+
+        <button type="submit" class="btn-primary">🚀 Submit Proposal to Selected Project</button>
+      </form>
+    </section>
+
+    <!-- ================= 6. TWO-WAY RATING & FEEDBACK HUB ================= -->
+    <section id="feedback-section" class="card feedback-container">
+      <div class="section-header">
+        <div>
+          <span class="badge badge-animated">⭐ Mutual Trust & Review Ecosystem</span>
+          <h2>Two-Way Feedback & Ratings (Consumer ↔ Contractor + Platform)</h2>
+          <p class="subtitle">Consumers rate Contractors & RenoCompare, and Contractors rate Consumers & RenoCompare!</p>
+        </div>
+        <button class="btn-outline" onclick="triggerCelebration('Thank you for exploring our Mutual Rating & Celebration experience!')">🎉 Preview Celebration</button>
+      </div>
+
+      <div class="feedback-layout">
+        <form id="feedbackForm" class="feedback-form-box" onsubmit="submitFeedback(event)">
+          <h3>Leave Your Rating & Review</h3>
+          <div class="form-group">
+            <label>I am submitting as *</label>
+            <select id="fbReviewerRole" onchange="updateFeedbackPartnerLabel()">
+              <option value="Consumer">🏠 Consumer (Rating Contractor & Platform)</option>
+              <option value="Contractor">🔨 Contractor (Rating Consumer & Platform)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Your Name / Company *</label>
+            <input type="text" id="fbReviewerName" required placeholder="e.g., Aarav Sharma" />
+          </div>
+          <div class="form-group">
+            <label id="fbPartnerLabel">Contractor Being Rated *</label>
+            <input type="text" id="fbTargetName" required placeholder="e.g., Apex Home Renovations" />
+          </div>
+
+          <div class="rating-selectors">
+            <div class="rating-row">
+              <label id="partnerStarLabel">Rate Partner (1–5 ★):</label>
+              <select id="fbPartnerStars">
+                <option value="5">★★★★★ (5/5 - Excellent)</option>
+                <option value="4">★★★★☆ (4/5 - Very Good)</option>
+                <option value="3">★★★☆☆ (3/5 - Satisfactory)</option>
+                <option value="2">★★☆☆☆ (2/5 - Needs Improvement)</option>
+                <option value="1">★☆☆☆☆ (1/5 - Poor)</option>
+              </select>
+            </div>
+            <div class="rating-row">
+              <label>Rate RenoCompare Platform (1–5 ★):</label>
+              <select id="fbPlatformStars">
+                <option value="5">★★★★★ (5/5 - Super Transparent!)</option>
+                <option value="4">★★★★☆ (4/5 - Very Helpful)</option>
+                <option value="3">★★★☆☆ (3/5 - Good)</option>
+                <option value="2">★★☆☆☆ (2/5 - Fair)</option>
+                <option value="1">★☆☆☆☆ (1/5 - Poor)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Written Feedback / Experience *</label>
+            <input type="text" id="fbComment" required placeholder="Share how the project scope, timeline, or collaboration went..." />
+          </div>
+          <button type="submit" class="btn-primary btn-full">Post Verified Review</button>
+        </form>
+
+        <div class="feedback-feed-wrapper">
+          <h3>Recent Verified Community Reviews</h3>
+          <div id="feedback-list" class="feedback-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 7. INTERACTIVE FAQ SECTION ================= -->
+    <section id="faq-section" class="card">
+      <div class="section-header">
+        <div>
+          <span class="badge">❓ Got Questions?</span>
+          <h2>Frequently Asked Questions (FAQ)</h2>
+          <p class="subtitle">Everything homeowners and contractors need to know about RenoCompare v7.0</p>
+        </div>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>1. How does the new Smart Area Budget Calculator help homeowners?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Inside the Project Banner, homeowners can open the <strong>"🧮 Smart Area Budget Calculator"</strong>, enter their Carpet Area (sq.ft.), and choose Economy (₹1,200/sqft), Premium (₹1,850/sqft), or Luxury (₹2,600/sqft) to compute and apply a realistic target budget in one click.
           </div>
         </div>
 
-        <button type="submit" class="btn-primary">Save & Compare Proposal</button>
-      </form>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>2. How do Itemized Cost Splits and Red-Flag Risk Badges protect consumers?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Every proposal card automatically breaks down quotes into <strong>Materials (55%) • Labor & Civil (30%) • MEP/Design (15%)</strong> and flags quotes &gt;15% below budget with a <strong>"⚠️ Lowball Risk: Verify Material Grades"</strong> warning or missing scope alerts.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>3. How does the Counter-Offer & Price Negotiation workflow work?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Click <strong>"🤝 Counter-Offer"</strong> on any proposal card to propose a revised price and timeline. Submitting places a live <strong>"💬 Counter-Offer Sent"</strong> badge on the card and automatically records the official offer inside the Admin-monitored Contractor Chat!
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            <span>4. How does the Two-Way Rating system protect both Consumers and Contractors?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            Homeowners rate contractors on material quality and timeline adherence, while contractors rate homeowners on clear requirements and timely milestone approvals—and both rate the RenoCompare platform!
+          </div>
+        </div>
+      </div>
     </section>
+
+    <!-- ================= 8. CONTACT US SECTION ================= -->
+    <section id="contact-section" class="card contact-card">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <span class="badge">📞 24/7 Renovation Support Desk</span>
+          <h2>Contact Us</h2>
+          <p>Have questions about comparing contractor proposals, verifying material grades, or resolving a project query? Our support team is here to help.</p>
+
+          <div class="contact-highlights">
+            <div class="contact-pill">
+              <span>📧</span>
+              <div>
+                <strong>Email Support</strong>
+                <small>support@renocompare.in</small>
+              </div>
+            </div>
+            <div class="contact-pill">
+              <span>☎️</span>
+              <div>
+                <strong>Helpline Desk</strong>
+                <small>+91 1800-RENO-CARE (Mon–Sat, 9 AM – 8 PM)</small>
+              </div>
+            </div>
+            <div class="contact-pill">
+              <span>📍</span>
+              <div>
+                <strong>Innovation Hub</strong>
+                <small>CSE-326 Project Lab, School of Computer Science & Engineering</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form id="contactForm" class="contact-form" onsubmit="handleContactSubmit(event)">
+          <h3>Send Us a Message</h3>
+          <div class="form-group">
+            <label>Your Name *</label>
+            <input type="text" id="contactName" required placeholder="Enter your full name" />
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="contactEmail" required placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label>Topic *</label>
+            <select id="contactTopic">
+              <option value="Proposal Comparison Help">Proposal Comparison Help</option>
+              <option value="Contractor Verification Request">Contractor Verification Request</option>
+              <option value="Material & Scope Dispute">Material & Scope Dispute</option>
+              <option value="Platform Feedback / Partnership">Platform Feedback / Partnership</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Message *</label>
+            <input type="text" id="contactMessage" required placeholder="How can our team help you?" />
+          </div>
+          <button type="submit" class="btn-primary btn-full">📨 Send Message to RenoCompare Team</button>
+          <div id="contactSuccessBanner" class="contact-success hidden">
+            ✅ Thank you! Your message has been received by our Support & Admin Desk.
+          </div>
+        </form>
+      </div>
+    </section>
+
   </main>
 
   <footer>
-    <p>CSE-326 CA2 Problem Statement Project • RenoCompare Platform</p>
+    <p>CSE-326 Problem Statement Project • <strong>RenoCompare v7.0 Ultimate Edition</strong> (Nordic Emerald & Soft Sand UI, Cost Split, Counter-Offers, Gantt Schedule & Red-Flag Detector)</p>
   </footer>
 
   <script src="script.js"></script>
